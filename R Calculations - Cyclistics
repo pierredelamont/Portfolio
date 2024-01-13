@@ -1,1 +1,20 @@
+install.packages("tidyverse")
+library(tidyverse) 
+
+> jan_tripdata <- read.csv("C:/Users/andre/OneDrive/Desktop/Data_Analyst/Capstone_Bike/clean_data_ride_length/202301-divvy-tripdata.csv")
+> feb_tripdata <- read.csv("C:/Users/andre/OneDrive/Desktop/Data_Analyst/Capstone_Bike/clean_data_ride_length/202302-divvy-tripdata.csv")
+> mar_tripdata <- read.csv("C:/Users/andre/OneDrive/Desktop/Data_Analyst/Capstone_Bike/clean_data_ride_length/202303-divvy-tripdata.csv")
+> apr_tripdata <- read.csv("C:/Users/andre/OneDrive/Desktop/Data_Analyst/Capstone_Bike/clean_data_ride_length/202304-divvy-tripdata.csv")
+> may_tripdata <- read.csv("C:/Users/andre/OneDrive/Desktop/Data_Analyst/Capstone_Bike/clean_data_ride_length/202305-divvy-tripdata.csv")
+> jun_tripdata <- read.csv("C:/Users/andre/OneDrive/Desktop/Data_Analyst/Capstone_Bike/clean_data_ride_length/202306-divvy-tripdata.csv")
+> jul_tripdata <- read.csv("C:/Users/andre/OneDrive/Desktop/Data_Analyst/Capstone_Bike/clean_data_ride_length/202307-divvy-tripdata.csv")
+> aug_tripdata <- read.csv("C:/Users/andre/OneDrive/Desktop/Data_Analyst/Capstone_Bike/clean_data_ride_length/202308-divvy-tripdata.csv")
+> sep_tripdata <- read.csv("C:/Users/andre/OneDrive/Desktop/Data_Analyst/Capstone_Bike/clean_data_ride_length/202309-divvy-tripdata.csv")
+> oct_tripdata <- read.csv("C:/Users/andre/OneDrive/Desktop/Data_Analyst/Capstone_Bike/clean_data_ride_length/202310-divvy-tripdata.csv")
+> nov_tripdata <- read.csv("C:/Users/andre/OneDrive/Desktop/Data_Analyst/Capstone_Bike/clean_data_ride_length/202311-divvy-tripdata.csv")
+> dec_tripdata <- read.csv("C:/Users/andre/OneDrive/Desktop/Data_Analyst/Capstone_Bike/clean_data_ride_length/202312-divvy-tripdata.csv")
+
+total_data_set <- rbind(jan_tripdata, feb_tripdata, feb_tripdata, mar_tripdata, apr_tripdata, may_tripdata, jun_tripdata, jul_tripdata, aug_tripdata, sep_tripdata, oct_tripdata, nov_tripdata, dec_tripdata)
+options(max.print=1000000000)
+ride_length <- as.POSIXct(total_data_set$ride_length,format="%H:%M:%S", tz="UTC")
 

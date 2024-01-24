@@ -36,12 +36,9 @@ avg_ride_length <- mean(total_data_set$ride_length_min)
 nrow(total_data_set)
 str(total_data_set)
 
-clean_dataset <- na.omit(total_data_set)
-##complete.cases() works as well
-nrow(clean_dataset)
-
-clean_dataset %>% distinct()
-nrow(clean_dataset)
+#complete.cases might work as well
+clean_dataset <- na.omit(total_data_set) %>% 
+  distinct()
 
 rideable_type <- clean_dataset$rideable_type
 total_dataset <- subset(clean_dataset, rideable_type != "docked_bike")

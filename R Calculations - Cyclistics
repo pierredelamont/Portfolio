@@ -56,3 +56,8 @@ rideable_type <- clean_dataset$rideable_type
 total_dataset <- subset(clean_dataset, rideable_type != "docked_bike")
 nrow(total_dataset)
 
+##add ride_length (ended_at - started_at) and day_of_week columns
+
+total_dataset %>% 
+  mutate(ride_length = difftime(ended_at, started_at, units = "minutes")) %>% 
+  mutate(day_of_week = wday(total_dataset$started_at))

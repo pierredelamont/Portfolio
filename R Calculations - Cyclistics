@@ -1,26 +1,49 @@
+##open Posit Cloud
 install.packages("tidyverse")
 library(tidyverse) 
 
-jan_tripdata <- read.csv("C:/Users/andre/OneDrive/Desktop/Data_Analyst/Capstone_Bike/clean_data_ride_length_new/202301-divvy-tripdata.csv")
-feb_tripdata <- read.csv("C:/Users/andre/OneDrive/Desktop/Data_Analyst/Capstone_Bike/clean_data_ride_length_new/202302-divvy-tripdata.csv")
-mar_tripdata <- read.csv("C:/Users/andre/OneDrive/Desktop/Data_Analyst/Capstone_Bike/clean_data_ride_length_new/202303-divvy-tripdata.csv")
-apr_tripdata <- read.csv("C:/Users/andre/OneDrive/Desktop/Data_Analyst/Capstone_Bike/clean_data_ride_length_new/202304-divvy-tripdata.csv")
-may_tripdata <- read.csv("C:/Users/andre/OneDrive/Desktop/Data_Analyst/Capstone_Bike/clean_data_ride_length_new/202305-divvy-tripdata.csv")
-jun_tripdata <- read.csv("C:/Users/andre/OneDrive/Desktop/Data_Analyst/Capstone_Bike/clean_data_ride_length_new/202306-divvy-tripdata.csv")
-jul_tripdata <- read.csv("C:/Users/andre/OneDrive/Desktop/Data_Analyst/Capstone_Bike/clean_data_ride_length_new/202307-divvy-tripdata.csv")
-aug_tripdata <- read.csv("C:/Users/andre/OneDrive/Desktop/Data_Analyst/Capstone_Bike/clean_data_ride_length_new/202308-divvy-tripdata.csv")
-sep_tripdata <- read.csv("C:/Users/andre/OneDrive/Desktop/Data_Analyst/Capstone_Bike/clean_data_ride_length_new/202309-divvy-tripdata.csv")
-oct_tripdata <- read.csv("C:/Users/andre/OneDrive/Desktop/Data_Analyst/Capstone_Bike/clean_data_ride_length_new/202310-divvy-tripdata.csv")
-nov_tripdata <- read.csv("C:/Users/andre/OneDrive/Desktop/Data_Analyst/Capstone_Bike/clean_data_ride_length_new/202311-divvy-tripdata.csv")
-dec_tripdata <- read.csv("C:/Users/andre/OneDrive/Desktop/Data_Analyst/Capstone_Bike/clean_data_ride_length_new/202312-divvy-tripdata.csv")
+jan_tripdata <- read_csv("202301-divvy-tripdata.csv")
+feb_tripdata <- read_csv("202302-divvy-tripdata.csv")
+mar_tripdata <- read_csv("202303-divvy-tripdata.csv")
+apr_tripdata <- read_csv("202304-divvy-tripdata.csv")
+may_tripdata <- read_csv("202305-divvy-tripdata.csv")
+jun_tripdata <- read_csv("202306-divvy-tripdata.csv")
+jul_tripdata <- read_csv("202307-divvy-tripdata.csv")
+aug_tripdata <- read_csv("202308-divvy-tripdata.csv")
+sep_tripdata <- read_csv("202309-divvy-tripdata.csv")
+oct_tripdata <- read_csv("202310-divvy-tripdata.csv")
+nov_tripdata <- read_csv("202311-divvy-tripdata.csv")
+dec_tripdata <- read_csv("202312-divvy-tripdata.csv")
+
+
+##If uploading in R 
+##jan_tripdata <- read.csv("C:/Users/andre/OneDrive/Desktop/Data_Analyst/Capstone_Bike/OG_data/202301-divvy-tripdata.csv")
+##feb_tripdata <- read.csv("C:/Users/andre/OneDrive/Desktop/Data_Analyst/Capstone_Bike/OG_data/202302-divvy-tripdata.csv")
+##mar_tripdata <- read.csv("C:/Users/andre/OneDrive/Desktop/Data_Analyst/Capstone_Bike/OG_data/202303-divvy-tripdata.csv")
+##apr_tripdata <- read.csv("C:/Users/andre/OneDrive/Desktop/Data_Analyst/Capstone_Bike/OG_data/202304-divvy-tripdata.csv")
+##may_tripdata <- read.csv("C:/Users/andre/OneDrive/Desktop/Data_Analyst/Capstone_Bike/OG_data/202305-divvy-tripdata.csv")
+##jun_tripdata <- read.csv("C:/Users/andre/OneDrive/Desktop/Data_Analyst/Capstone_Bike/OG_data/202306-divvy-tripdata.csv")
+##jul_tripdata <- read.csv("C:/Users/andre/OneDrive/Desktop/Data_Analyst/Capstone_Bike/OG_data/202307-divvy-tripdata.csv")
+##aug_tripdata <- read.csv("C:/Users/andre/OneDrive/Desktop/Data_Analyst/Capstone_Bike/OG_data/202308-divvy-tripdata.csv")
+##sep_tripdata <- read.csv("C:/Users/andre/OneDrive/Desktop/Data_Analyst/Capstone_Bike/OG_data/202309-divvy-tripdata.csv")
+##oct_tripdata <- read.csv("C:/Users/andre/OneDrive/Desktop/Data_Analyst/Capstone_Bike/OG_data/202310-divvy-tripdata.csv")
+##nov_tripdata <- read.csv("C:/Users/andre/OneDrive/Desktop/Data_Analyst/Capstone_Bike/OG_data/202311-divvy-tripdata.csv")
+##dec_tripdata <- read.csv("C:/Users/andre/OneDrive/Desktop/Data_Analyst/Capstone_Bike/OG_data/202312-divvy-tripdata.csv")
 
 total_data_set <- rbind(jan_tripdata, feb_tripdata, feb_tripdata, mar_tripdata, apr_tripdata, may_tripdata, jun_tripdata, jul_tripdata, aug_tripdata, sep_tripdata, oct_tripdata, nov_tripdata, dec_tripdata)
 avg_ride_length <- mean(total_data_set$ride_length_min)
 
-##try adding month column
-mutate(total_data_set, "month", int) 
+nrow(total_data_set)
+str(total_data_set)
 
+clean_dataset <- na.omit(total_data_set)
+##complete.cases() works as well
+nrow(clean_dataset)
 
-options(max.print=1000000000)
-ride_length <- as.POSIXct(total_data_set$ride_length,format="%H:%M:%S", tz="UTC")
+clean_dataset %>% distinct()
+nrow(clean_dataset)
+
+rideable_type <- clean_dataset$rideable_type
+total_dataset <- subset(clean_dataset, rideable_type != "docked_bike")
+nrow(total_dataset)
 

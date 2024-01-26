@@ -1,3 +1,13 @@
+install.packages("tidyverse")
+install.packages("scales")
+
+library(tidyverse)
+library(readr)
+library(lubridate)
+library(ggplot2)
+
+library(scales)
+
 ##open Posit Cloud
 install.packages("tidyverse")
 library(tidyverse) 
@@ -91,4 +101,13 @@ total_dataset %>%
   summarize(total_rides = n()) %>% 
   arrange(member_casual)
 
-ggplot(total_dataset(mapping = aes(x=month) + geombar()
+#start with this graph. Figure out how to filter for member_casual, rideable_type, use line graphs, and mapping features. 
+
+#total rides by month 
+ggplot(total_dataset, aes(x=month, fill = member_casual)) + geom_bar(position = "dodge") + scale_y_continuous(labels=comma)
+
+#total rides by day of week
+ggplot(total_dataset, aes(x=day_of_week, fill = member_casual)) + geom_bar(position = "dodge") + scale_y_continuous(labels=comma)
+
+#average ride length by month 
+ggplot(total_dataset, aes(x=month, y=mean(ride_length), fill = member_casual)) + geom_bar(position = "dodge")

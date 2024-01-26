@@ -58,6 +58,37 @@ nrow(total_dataset)
 
 ##add ride_length (ended_at - started_at) and day_of_week columns
 
+total_dataset <- total_dataset %>% 
+  mutate(ride_length = difftime(ended_at, started_at, units = "mins")) %>% 
+  mutate(day_of_week = wday(total_dataset$started_at)) %>% 
+  mutate(month = format(as.Date(total_dataset$started_at, format="%d/%m/%Y"),"%m"))
+
+ride_length <- total_dataset$ride_length
+casual_member <- total_dataset$member_casual
+day_of_week <- total_dataset$day_of_week
+
+#average ride length per month
 total_dataset %>% 
-  mutate(ride_length = difftime(ended_at, started_at, units = "minutes")) %>% 
-  mutate(day_of_week = wday(total_dataset$started_at))
+  group_by(month, member_casual) %>% 
+  summarize(mean_ridelength = mean(ride_length)) %>% 
+  arrange(member_casual)
+
+#average ride length per day 
+total_dataset %>% 
+  group_by(day_of_week, member_casual) %>% 
+  summarize(mean_ridelength = mean(ride_length)) %>% 
+  arrange(member_casual)
+
+#Total rides per month 
+total_dataset %>% 
+  group_by(month, member_casual) %>% 
+  summarize(total_rides = n()) %>% 
+  arrange(member_casual)
+
+#Total rides per day
+total_dataset %>% 
+  group_by(day_of_week, member_casual) %>% 
+  summarize(total_rides = n()) %>% 
+  arrange(member_casual)
+
+ggplot(total_dataset(mapping = aes(x=month) + geombar()

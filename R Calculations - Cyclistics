@@ -130,4 +130,43 @@ total_dataset %>%
   geom_col(position = "dodge2")  + ggtitle("Average Ride Length: Day of Week") + 
   xlab("Weekdays") + ylab("Minutes") + labs(fill = "Membership Status")
 
+#total rides by month, filtered by bike type 
+ggplot(total_dataset, aes(x=month, fill = member_casual)) + 
+  geom_bar(position = "dodge") + scale_y_continuous(labels=comma) + 
+  ggtitle("Total Rides: Month") + 
+  xlab("Month") + ylab("Minutes") + labs(fill = "Membership Status") +
+  facet_wrap(vars(rideable_type))
 
+#total rides by day of week, filtered by bike type
+ggplot(total_dataset, aes(x=day_of_week, fill = member_casual)) + 
+  geom_bar(position = "dodge") + scale_y_continuous(labels=comma) +
+  ggtitle("Total Rides: Day of the Week") + 
+  xlab("Weekday") + ylab("Minutes") + labs(fill = "Membership Status") +
+  facet_wrap(vars(rideable_type))
+
+#average ride length by month, filtered by bike type 
+total_dataset %>% 
+  group_by(month, member_casual, rideable_type) %>% 
+  summarize(mean_ridelength = mean(ride_length)) %>% 
+  ggplot(aes(x = month, y = mean_ridelength, fill = member_casual)) + 
+  geom_col(position = "dodge2")  + ggtitle("Average Ride Length: Month") + 
+  xlab("Month") + ylab("Minutes") + labs(fill = "Membership Status") +
+  facet_wrap(vars(rideable_type))
+
+#average ride length by day of week, filtered by bike type
+total_dataset %>% 
+  group_by(day_of_week, member_casual, rideable_type) %>% 
+  summarize(mean_ridelength = mean(ride_length)) %>% 
+  ggplot(aes(x = day_of_week, y = mean_ridelength, fill = member_casual)) + 
+  geom_col(position = "dodge2")  + ggtitle("Average Ride Length: Day of Week") + 
+  xlab("Weekdays") + ylab("Minutes") + labs(fill = "Membership Status") +
+  facet_wrap(vars(rideable_type))
+
+#Map out density 
+install.packages("sf")
+library(sf)
+chi_map <- read_sf("https://raw.githubusercontent.com/thisisdaryn/data/master/geo/chicago/Comm_Areas.geojson")
+ggplot(data=chi_map) + geom_sf() + 
+  geom_point(data=total_dataset, aes(x=start_lat, y=start_lng, fill="blue")) +
+  geom_point(data=total_dataset, aes(x=end_lat, y=end_lng, fill="red"))
+ggplot(data=chi_map) + geom_sf() + geom_point(data = total_dataset, aes(x = start_lat, y = start_lng))

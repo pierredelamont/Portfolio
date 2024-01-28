@@ -1,28 +1,15 @@
 install.packages("tidyverse")
+install.packages("sf")
 install.packages("scales")
+#install.packages("plotly")
 
 library(tidyverse)
 library(readr)
 library(lubridate)
 library(ggplot2)
+library(sf)
 library(scales)
-
-##open Posit Cloud
-install.packages("tidyverse")
-library(tidyverse) 
-
-jan_tripdata <- read_csv("202301-divvy-tripdata.csv")
-feb_tripdata <- read_csv("202302-divvy-tripdata.csv")
-mar_tripdata <- read_csv("202303-divvy-tripdata.csv")
-apr_tripdata <- read_csv("202304-divvy-tripdata.csv")
-may_tripdata <- read_csv("202305-divvy-tripdata.csv")
-jun_tripdata <- read_csv("202306-divvy-tripdata.csv")
-jul_tripdata <- read_csv("202307-divvy-tripdata.csv")
-aug_tripdata <- read_csv("202308-divvy-tripdata.csv")
-sep_tripdata <- read_csv("202309-divvy-tripdata.csv")
-oct_tripdata <- read_csv("202310-divvy-tripdata.csv")
-nov_tripdata <- read_csv("202311-divvy-tripdata.csv")
-dec_tripdata <- read_csv("202312-divvy-tripdata.csv")
+#library(plotly)
 
 jan_tripdata <- read_csv("202201-divvy-tripdata.csv")
 feb_tripdata <- read_csv("202202-divvy-tripdata.csv")
@@ -37,33 +24,12 @@ oct_tripdata <- read_csv("202210-divvy-tripdata.csv")
 nov_tripdata <- read_csv("202211-divvy-tripdata.csv")
 dec_tripdata <- read_csv("202212-divvy-tripdata.csv")
 
+total_data_set <- rbind(jan_tripdata, feb_tripdata, mar_tripdata, apr_tripdata, may_tripdata, jun_tripdata, jul_tripdata, aug_tripdata, sep_tripdata, oct_tripdata, nov_tripdata, dec_tripdata)
 
-##If uploading in R 
-jan_tripdata <- read.csv("C:/Users/andre/OneDrive/Desktop/Data_Analyst/Capstone_Bike/OG_data_2022/202201-divvy-tripdata.csv")
-feb_tripdata <- read.csv("C:/Users/andre/OneDrive/Desktop/Data_Analyst/Capstone_Bike/OG_data_2022/202202-divvy-tripdata.csv")
-mar_tripdata <- read.csv("C:/Users/andre/OneDrive/Desktop/Data_Analyst/Capstone_Bike/OG_data_2022/202203-divvy-tripdata.csv")
-apr_tripdata <- read.csv("C:/Users/andre/OneDrive/Desktop/Data_Analyst/Capstone_Bike/OG_data_2022/202204-divvy-tripdata.csv")
-may_tripdata <- read.csv("C:/Users/andre/OneDrive/Desktop/Data_Analyst/Capstone_Bike/OG_data_2022/202205-divvy-tripdata.csv")
-jun_tripdata <- read.csv("C:/Users/andre/OneDrive/Desktop/Data_Analyst/Capstone_Bike/OG_data_2022/202206-divvy-tripdata.csv")
-jul_tripdata <- read.csv("C:/Users/andre/OneDrive/Desktop/Data_Analyst/Capstone_Bike/OG_data_2022/202207-divvy-tripdata.csv")
-aug_tripdata <- read.csv("C:/Users/andre/OneDrive/Desktop/Data_Analyst/Capstone_Bike/OG_data_2022/202208-divvy-tripdata.csv")
-sep_tripdata <- read.csv("C:/Users/andre/OneDrive/Desktop/Data_Analyst/Capstone_Bike/OG_data_2022/202209-divvy-tripdata.csv")
-oct_tripdata <- read.csv("C:/Users/andre/OneDrive/Desktop/Data_Analyst/Capstone_Bike/OG_data_2022/202210-divvy-tripdata.csv")
-nov_tripdata <- read.csv("C:/Users/andre/OneDrive/Desktop/Data_Analyst/Capstone_Bike/OG_data_2022/202211-divvy-tripdata.csv")
-dec_tripdata <- read.csv("C:/Users/andre/OneDrive/Desktop/Data_Analyst/Capstone_Bike/OG_data_2022/202212-divvy-tripdata.csv")
-
-total_data_set <- rbind(jan_tripdata, feb_tripdata, feb_tripdata, mar_tripdata, apr_tripdata, may_tripdata, jun_tripdata, jul_tripdata, aug_tripdata, sep_tripdata, oct_tripdata, nov_tripdata, dec_tripdata)
-
-nrow(total_data_set)
-str(total_data_set)
-
-#complete.cases might work as well
 clean_dataset <- na.omit(total_data_set) %>% 
   distinct()
 
-rideable_type <- clean_dataset$rideable_type
 total_dataset <- subset(clean_dataset, rideable_type != "docked_bike")
-nrow(total_dataset)
 
 ##add ride_length (ended_at - started_at) and day_of_week columns
 
@@ -72,47 +38,49 @@ total_dataset <- total_dataset %>%
   mutate(day_of_week = wday(total_dataset$started_at)) %>% 
   mutate(month = format(as.Date(total_dataset$started_at, format="%d/%m/%Y"),"%m"))
 
-ride_length <- total_dataset$ride_length
-casual_member <- total_dataset$member_casual
+ride_length <- (total_dataset$ride_length)
+member_casual <- total_dataset$member_casual
 day_of_week <- total_dataset$day_of_week
+rideable_type <- total_dataset$rideable_type
 
-#average ride length per month
+##Analyze
+
 total_dataset %>% 
   group_by(month, member_casual) %>% 
   summarize(mean_ridelength = mean(ride_length)) %>% 
-  arrange(member_casual)
-
-#average ride length per day 
+  arrange(member_casual) %>% 
+  print(n=24)
+  
 total_dataset %>% 
   group_by(day_of_week, member_casual) %>% 
   summarize(mean_ridelength = mean(ride_length)) %>% 
   arrange(member_casual)
 
-#Total rides per month 
 total_dataset %>% 
   group_by(month, member_casual) %>% 
   summarize(total_rides = n()) %>% 
-  arrange(member_casual)
+  arrange(member_casual) %>% 
+  print(n=24)
 
-#Total rides per day
 total_dataset %>% 
   group_by(day_of_week, member_casual) %>% 
   summarize(total_rides = n()) %>% 
   arrange(member_casual)
 
-#start with this graph. Figure out how to filter for member_casual, rideable_type, use line graphs, and mapping features. 
+#Share
 
 #total rides by month 
 ggplot(total_dataset, aes(x=month, fill = member_casual)) + 
   geom_bar(position = "dodge") + scale_y_continuous(labels=comma) + 
   ggtitle("Total Rides: Month") + 
-  xlab("Month") + ylab("Minutes") + labs(fill = "Membership Status")
+  xlab("Month") + ylab("Rides") + labs(fill = "Membership Status")
 
 #total rides by day of week
 ggplot(total_dataset, aes(x=day_of_week, fill = member_casual)) + 
   geom_bar(position = "dodge") + scale_y_continuous(labels=comma) +
+  scale_x_continuous(breaks=seq(1,7,1)) + 
   ggtitle("Total Rides: Day of the Week") + 
-  xlab("Weekday") + ylab("Minutes") + labs(fill = "Membership Status")
+  xlab("Weekday") + ylab("Rides") + labs(fill = "Membership Status")
 
 #average ride length by month 
 total_dataset %>% 
@@ -127,21 +95,23 @@ total_dataset %>%
   group_by(day_of_week, member_casual) %>% 
   summarize(mean_ridelength = mean(ride_length)) %>% 
   ggplot(aes(x = day_of_week, y = mean_ridelength, fill = member_casual)) + 
-  geom_col(position = "dodge2")  + ggtitle("Average Ride Length: Day of Week") + 
-  xlab("Weekdays") + ylab("Minutes") + labs(fill = "Membership Status")
+  scale_x_continuous(breaks=seq(1,7,1)) + geom_col(position = "dodge2")  + 
+  ggtitle("Average Ride Length: Day of Week") + xlab("Weekday") + 
+  ylab("Minutes") + labs(fill = "Membership Status")  
 
 #total rides by month, filtered by bike type 
 ggplot(total_dataset, aes(x=month, fill = member_casual)) + 
   geom_bar(position = "dodge") + scale_y_continuous(labels=comma) + 
   ggtitle("Total Rides: Month") + 
-  xlab("Month") + ylab("Minutes") + labs(fill = "Membership Status") +
+  xlab("Month") + ylab("Rides") + labs(fill = "Membership Status") +
   facet_wrap(vars(rideable_type))
 
 #total rides by day of week, filtered by bike type
 ggplot(total_dataset, aes(x=day_of_week, fill = member_casual)) + 
   geom_bar(position = "dodge") + scale_y_continuous(labels=comma) +
   ggtitle("Total Rides: Day of the Week") + 
-  xlab("Weekday") + ylab("Minutes") + labs(fill = "Membership Status") +
+  scale_x_continuous(breaks=seq(1,7,1)) +
+  xlab("Weekday") + ylab("Rides") + labs(fill = "Membership Status") +
   facet_wrap(vars(rideable_type))
 
 #average ride length by month, filtered by bike type 
@@ -158,15 +128,6 @@ total_dataset %>%
   group_by(day_of_week, member_casual, rideable_type) %>% 
   summarize(mean_ridelength = mean(ride_length)) %>% 
   ggplot(aes(x = day_of_week, y = mean_ridelength, fill = member_casual)) + 
-  geom_col(position = "dodge2")  + ggtitle("Average Ride Length: Day of Week") + 
-  xlab("Weekdays") + ylab("Minutes") + labs(fill = "Membership Status") +
-  facet_wrap(vars(rideable_type))
-
-#Map out density 
-install.packages("sf")
-library(sf)
-chi_map <- read_sf("https://raw.githubusercontent.com/thisisdaryn/data/master/geo/chicago/Comm_Areas.geojson")
-ggplot(data=chi_map) + geom_sf() + 
-  geom_point(data=total_dataset, aes(x=start_lat, y=start_lng, fill="blue")) +
-  geom_point(data=total_dataset, aes(x=end_lat, y=end_lng, fill="red"))
-ggplot(data=chi_map) + geom_sf() + geom_point(data = total_dataset, aes(x = start_lat, y = start_lng))
+  scale_x_continuous(breaks=seq(1,7,1)) + geom_col(position = "dodge2")  + 
+  ggtitle("Average Ride Length: Day of Week") + xlab("Weekday") + ylab("Minutes") + 
+  labs(fill = "Membership Status") + facet_wrap(vars(rideable_type))
